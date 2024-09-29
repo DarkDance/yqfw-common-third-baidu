@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.baidu.enums;
+package cn.jzyunqi.common.third.baidu.image.ocr.enums;
 
 /**
  * @author wiiyaya

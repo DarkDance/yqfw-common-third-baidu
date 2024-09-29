@@ -1,5 +1,6 @@
 package cn.jzyunqi.common.third.baidu.response;
 
+import cn.jzyunqi.common.third.baidu.common.model.BaiduRspV1;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class AccurateBasicResponse extends BaiduType1Response{
+public class AccurateBasicResponse extends BaiduRspV1 {
 
     /**
      * 请求id

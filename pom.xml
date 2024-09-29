@@ -5,16 +5,16 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.3</version>
+        <version>3.3.2</version>
     </parent>
 
     <groupId>cn.jzyunqi</groupId>
     <artifactId>yqfw-common-third-baidu</artifactId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.5-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <yqfw.version>0.0.4-SNAPSHOT</yqfw.version>
+        <yqfw.version>0.0.5-SNAPSHOT</yqfw.version>
         <commons-io.version>2.15.1</commons-io.version>
     </properties>
 

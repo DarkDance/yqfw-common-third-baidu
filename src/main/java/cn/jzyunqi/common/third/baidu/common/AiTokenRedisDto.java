@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.baidu.model;
+package cn.jzyunqi.common.third.baidu.common;
 
 import lombok.Getter;
 import lombok.Setter;

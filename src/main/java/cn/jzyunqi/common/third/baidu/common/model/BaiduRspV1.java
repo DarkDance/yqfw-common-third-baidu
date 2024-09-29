@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.baidu.response;
+package cn.jzyunqi.common.third.baidu.common.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class BaiduType1Response {
+public class BaiduRspV1 {
 
     /**
      * 返回结果状态值， 成功返回0

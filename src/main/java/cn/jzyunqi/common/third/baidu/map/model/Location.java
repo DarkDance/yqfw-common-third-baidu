@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.baidu.model;
+package cn.jzyunqi.common.third.baidu.map.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

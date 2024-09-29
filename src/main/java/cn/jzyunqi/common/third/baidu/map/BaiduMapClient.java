@@ -1,17 +1,15 @@
-package cn.jzyunqi.common.third.baidu.client;
+package cn.jzyunqi.common.third.baidu.map;
 
 import cn.jzyunqi.common.exception.BusinessException;
-import cn.jzyunqi.common.third.baidu.enums.CoordinateType;
-import cn.jzyunqi.common.third.baidu.model.Location;
-import cn.jzyunqi.common.third.baidu.model.LonLatAddress;
-import cn.jzyunqi.common.third.baidu.response.BaiduType3Response;
+import cn.jzyunqi.common.third.baidu.map.enums.CoordinateType;
+import cn.jzyunqi.common.third.baidu.map.model.Location;
+import cn.jzyunqi.common.third.baidu.map.model.LonLatAddress;
+import cn.jzyunqi.common.third.baidu.common.model.BaiduRspV3;
 import cn.jzyunqi.common.utils.CollectionUtilPlus;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.hc.core5.http.NameValuePair;
-import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -21,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -85,20 +82,17 @@ public class BaiduMapClient {
         paramMap.put("language", "zh-CN"); // 指定召回的新政区划语言类型
         paramMap.put("latest_admin", "1"); // 是否访问最新版行政区划数据（仅对中国数据生效），1（访问），0（不访问）
 
-        List<NameValuePair> nvpList = CollectionUtilPlus.Map.getUriParam(paramMap, true, true, false);
+        String nvpList = CollectionUtilPlus.Map.getUrlParam(paramMap, true, true, false);
         String sign = this.getSign(GATEWAY_V2_SING, paramMap);
-        nvpList.add(new BasicNameValuePair("sn", sign));
 
-        BaiduType3Response<LonLatAddress> llTOAddressRsp;
+        BaiduRspV3<LonLatAddress> llTOAddressRsp;
         try {
-            URI uri = new URIBuilder(MAP_GATEWAY_V2_URL)
-                    .addParameters(nvpList)
-                    .build();
+            URI uri = new URIBuilder(MAP_GATEWAY_V2_URL + "?" + nvpList + "&sn=" + sign).build();
             RequestEntity<Map<String, String>> requestEntity = new RequestEntity<>(paramMap, HttpMethod.GET, uri);
-            ParameterizedTypeReference<BaiduType3Response<LonLatAddress>> responseType = new ParameterizedTypeReference<BaiduType3Response<LonLatAddress>>() {
+            ParameterizedTypeReference<BaiduRspV3<LonLatAddress>> responseType = new ParameterizedTypeReference<BaiduRspV3<LonLatAddress>>() {
             };
-            ResponseEntity<BaiduType3Response<LonLatAddress>> sendRsp = restTemplate.exchange(requestEntity, responseType);
-            llTOAddressRsp = Optional.ofNullable(sendRsp.getBody()).orElseGet(BaiduType3Response::new);
+            ResponseEntity<BaiduRspV3<LonLatAddress>> sendRsp = restTemplate.exchange(requestEntity, responseType);
+            llTOAddressRsp = Optional.ofNullable(sendRsp.getBody()).orElseGet(BaiduRspV3::new);
         } catch (URISyntaxException e) {
             log.error("======BaiduMapHelper lonLatToAddress other error:", e);
             throw new BusinessException("common_error_baidu_lon_lat_to_address_error");
@@ -128,20 +122,17 @@ public class BaiduMapClient {
         paramMap.put("to", toType.getIndex().toString());
         paramMap.put("output", "json"); // 输出格式为json或者xml
 
-        List<NameValuePair> nvpList = CollectionUtilPlus.Map.getUriParam(paramMap, true, true, false);
+        String nvpList = CollectionUtilPlus.Map.getUrlParam(paramMap, true, true, false);
         String sign = this.getSign(GATEWAY_V1_SING, paramMap);
-        nvpList.add(new BasicNameValuePair("sn", sign));
 
-        BaiduType3Response<List<Map<String, String>>> lonLatChangeRsp;
+        BaiduRspV3<List<Map<String, String>>> lonLatChangeRsp;
         try {
-            URI uri = new URIBuilder(MAP_GATEWAY_V1_URL)
-                    .addParameters(nvpList)
-                    .build();
+            URI uri = new URIBuilder(MAP_GATEWAY_V1_URL + "?" + nvpList + "&sn=" + sign).build();
             RequestEntity<Map<String, String>> requestEntity = new RequestEntity<>(paramMap, HttpMethod.GET, uri);
-            ParameterizedTypeReference<BaiduType3Response<List<Map<String, String>>>> responseType = new ParameterizedTypeReference<BaiduType3Response<List<Map<String, String>>>>() {
+            ParameterizedTypeReference<BaiduRspV3<List<Map<String, String>>>> responseType = new ParameterizedTypeReference<BaiduRspV3<List<Map<String, String>>>>() {
             };
-            ResponseEntity<BaiduType3Response<List<Map<String, String>>>> sendRsp = restTemplate.exchange(requestEntity, responseType);
-            lonLatChangeRsp = Optional.ofNullable(sendRsp.getBody()).orElseGet(BaiduType3Response::new);
+            ResponseEntity<BaiduRspV3<List<Map<String, String>>>> sendRsp = restTemplate.exchange(requestEntity, responseType);
+            lonLatChangeRsp = Optional.ofNullable(sendRsp.getBody()).orElseGet(BaiduRspV3::new);
         } catch (URISyntaxException e) {
             log.error("======BaiduMapHelper lonLatChange other error:", e);
             throw new BusinessException("common_error_baidu_lon_lat_change_error");
@@ -161,11 +152,6 @@ public class BaiduMapClient {
 
     private String getSign(String gatewaySingStr, Map<String, String> paramMap) {
         String paramStr = String.format(gatewaySingStr, CollectionUtilPlus.Map.getUrlParam(paramMap, true, true, true), sk);
-        try {
-            return DigestUtilPlus.MD5.sign(URLEncoder.encode(paramStr, StringUtilPlus.UTF_8_S), Boolean.FALSE);
-        } catch (UnsupportedEncodingException e) {
-            log.error("======URLEncoder.getSign[{}] error, use original value!", paramStr, e);
-            return DigestUtilPlus.MD5.sign(paramStr, Boolean.FALSE);
-        }
+        return DigestUtilPlus.MD5.sign(URLEncoder.encode(paramStr, StringUtilPlus.UTF_8), Boolean.FALSE);
     }
 }

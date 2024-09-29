@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.baidu.response;
+package cn.jzyunqi.common.third.baidu.common.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class BaiduType2Response implements Serializable {
+public class BaiduRspV2 implements Serializable {
     @Serial
     private static final long serialVersionUID = -2025511973895963563L;
 

@@ -1,5 +1,6 @@
 package cn.jzyunqi.common.third.baidu.response;
 
+import cn.jzyunqi.common.third.baidu.common.model.BaiduRspV2;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class ApiTokenResponse extends BaiduType2Response {
+public class ApiTokenResponse extends BaiduRspV2 {
     private static final long serialVersionUID = -8802987797086759958L;
 
     /**

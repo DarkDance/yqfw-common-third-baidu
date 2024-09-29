@@ -1,11 +1,10 @@
-package cn.jzyunqi.common.third.baidu.client;
+package cn.jzyunqi.common.third.baidu.common;
 
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.redis.Cache;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
-import cn.jzyunqi.common.third.baidu.model.AiTokenRedisDto;
 import cn.jzyunqi.common.third.baidu.response.ApiTokenResponse;
-import cn.jzyunqi.common.third.baidu.response.BaiduType2Response;
+import cn.jzyunqi.common.third.baidu.common.model.BaiduRspV2;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
@@ -83,7 +82,7 @@ public class BaiduApiTokenClient {
         } catch (HttpClientErrorException e) {
             log.error("======BaiduApiTokenHelper getApiToken client error:", e);
             try {
-                BaiduType2Response errorRsp = objectMapper.readValue(e.getResponseBodyAsString(), BaiduType2Response.class);
+                BaiduRspV2 errorRsp = objectMapper.readValue(e.getResponseBodyAsString(), BaiduRspV2.class);
                 throw new BusinessException("common_error_bd_get_interface_token_error", errorRsp.getError(), errorRsp.getErrorDescription());
             } catch (IOException e1) {
                 throw new BusinessException("common_error_bd_get_interface_token_error", "-1", "readValue error");

@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.baidu.response;
+package cn.jzyunqi.common.third.baidu.common.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class BaiduType3Response<T> {
+public class BaiduRspV3<T> {
 
 	/**
 	 * 返回结果状态值， 成功返回0

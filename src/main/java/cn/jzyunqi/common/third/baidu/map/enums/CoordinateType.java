@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.baidu.enums;
+package cn.jzyunqi.common.third.baidu.map.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

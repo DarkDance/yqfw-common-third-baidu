@@ -9,9 +9,13 @@ import cn.jzyunqi.common.third.baidu.common.model.ClientTokenData;
 import cn.jzyunqi.common.third.baidu.common.model.ClientTokenRedisDto;
 import cn.jzyunqi.common.third.baidu.image.search.BaiduImgClassifyApiProxy;
 import cn.jzyunqi.common.third.baidu.image.search.model.ProductPagData;
+import cn.jzyunqi.common.utils.DigestUtilPlus;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 
+import javax.imageio.ImageIO;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -39,25 +43,34 @@ public class BaiduImgClient {
 
     public class Search {
         //图像搜索 - 商品图片搜索 - 入库
-        public void productAdd(String image, String url, String brief, String classId1, String classId2) throws BusinessException {
-            baiduImgClassifyApiProxy.productAdd(getClientToken(), image, url, brief, classId1, classId2);
+        public String productAdd(org.springframework.core.io.Resource image, String brief) throws BusinessException {
+            return baiduImgClassifyApiProxy.productAdd(getClientToken(), getImageBase64(image), null, brief, null, null).getContSign();
         }
 
         //图像搜索 - 商品图片搜索 - 检索
-        public ProductPagData productSearch(String image, String url, String classId1, String classId2, String tagLogic, String pn, String rn) throws BusinessException {
-            return baiduImgClassifyApiProxy.productSearch(getClientToken(), image, url, classId1, classId2, tagLogic, pn, rn);
+        public ProductPagData productSearch(org.springframework.core.io.Resource image, String start, String limit) throws BusinessException {
+            return baiduImgClassifyApiProxy.productSearch(getClientToken(), getImageBase64(image), null, null, null, null, start, limit);
         }
 
         //图像搜索 - 商品图片搜索 - 删除
-        public void productDelete(String image, String url, String contSign) throws BusinessException {
-            baiduImgClassifyApiProxy.productDelete(getClientToken(), image, url, contSign);
+        public void productDelete(String contSign) throws BusinessException {
+            baiduImgClassifyApiProxy.productDelete(getClientToken(), null, null, contSign);
         }
 
         //图像搜索 - 商品图片搜索 - 更新
-        public void productUpdate(String image, String url, String contSign, String brief, String classId1, String classId2) throws BusinessException {
-            baiduImgClassifyApiProxy.productUpdate(getClientToken(), image, url, contSign, brief, classId1, classId2);
+        public void productUpdate(String contSign, String brief, String classId1, String classId2) throws BusinessException {
+            baiduImgClassifyApiProxy.productUpdate(getClientToken(), null, null, contSign, brief, classId1, classId2);
         }
 
+        private static String getImageBase64(org.springframework.core.io.Resource image) throws BusinessException {
+            String base64Image;
+            try {
+                base64Image = DigestUtilPlus.Base64.encodeBase64String(image.getContentAsByteArray());
+            } catch (IOException e) {
+                throw new BusinessException(e, "图片读取失败");
+            }
+            return base64Image;
+        }
     }
 
     private String getClientToken() throws BusinessException {

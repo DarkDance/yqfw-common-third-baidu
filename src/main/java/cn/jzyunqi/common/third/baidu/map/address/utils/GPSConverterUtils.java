@@ -2,11 +2,9 @@ package cn.jzyunqi.common.third.baidu.map.address.utils;
 
 import cn.jzyunqi.common.third.baidu.map.address.model.Location;
 
-import java.math.BigDecimal;
-
 /**
  * @author wiiyaya
- * @date 2018/12/11.
+ * @since 2018/12/11.
  */
 public class GPSConverterUtils {
 
@@ -20,7 +18,7 @@ public class GPSConverterUtils {
      */
     public static Location gps84ToGcj02(double lat, double lon) {
         if (outOfChina(lat, lon)) {
-            return new Location(BigDecimal.valueOf(lat), BigDecimal.valueOf(lon));
+            return new Location(String.valueOf(lat), String.valueOf(lon));
         }
         double dLat = transformLat(lon - 105.0, lat - 35.0);
         double dLon = transformLon(lon - 105.0, lat - 35.0);
@@ -32,7 +30,7 @@ public class GPSConverterUtils {
         dLon = (dLon * 180.0) / (A / sqrtMagic * Math.cos(radLat) * PI);
         double mgLat = lat + dLat;
         double mgLon = lon + dLon;
-        return new Location(BigDecimal.valueOf(mgLat), BigDecimal.valueOf(mgLon));
+        return new Location(String.valueOf(mgLat), String.valueOf(mgLon));
     }
 
     /**
@@ -45,7 +43,7 @@ public class GPSConverterUtils {
         double theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * X_PI);
         double bd_lon = z * Math.cos(theta) + 0.0065;
         double bd_lat = z * Math.sin(theta) + 0.006;
-        return new Location(BigDecimal.valueOf(bd_lat), BigDecimal.valueOf(bd_lon));
+        return new Location(String.valueOf(bd_lat), String.valueOf(bd_lon));
     }
 
     /**
@@ -58,7 +56,7 @@ public class GPSConverterUtils {
         double theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * X_PI);
         double gg_lon = z * Math.cos(theta);
         double gg_lat = z * Math.sin(theta);
-        return new Location(BigDecimal.valueOf(gg_lat), BigDecimal.valueOf(gg_lon));
+        return new Location(String.valueOf(gg_lat), String.valueOf(gg_lon));
     }
 
     private static Boolean outOfChina(double lat, double lon) {

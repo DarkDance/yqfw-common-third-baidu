@@ -48,7 +48,7 @@ public class BaiduImgClient {
         }
 
         //图像搜索 - 商品图片搜索 - 检索
-        public ProductPagData productSearch(org.springframework.core.io.Resource image, String start, String limit) throws BusinessException {
+        public ProductPagData productSearch(org.springframework.core.io.Resource image, Integer start, Integer limit) throws BusinessException {
             return baiduImgClassifyApiProxy.productSearch(getClientToken(), getImageBase64(image), null, null, null, null, start, limit);
         }
 

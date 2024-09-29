@@ -24,7 +24,7 @@ public interface BaiduImgClassifyApiProxy {
 
     //图像搜索 - 商品图片搜索 - 检索
     @PostExchange(url = "/rest/2.0/image-classify/v1/realtime_search/product/search")
-    ProductPagData productSearch(@RequestParam String access_token, @RequestParam(required = false) String image, @RequestParam(required = false) String url, @RequestParam(required = false) String class_id1, @RequestParam(required = false) String class_id2, @RequestParam(required = false) String tag_logic, @RequestParam String pn, @RequestParam String rn) throws BusinessException;
+    ProductPagData productSearch(@RequestParam String access_token, @RequestParam(required = false) String image, @RequestParam(required = false) String url, @RequestParam(required = false) String class_id1, @RequestParam(required = false) String class_id2, @RequestParam(required = false) String tag_logic, @RequestParam Integer pn, @RequestParam Integer rn) throws BusinessException;
 
     //图像搜索 - 商品图片搜索 - 删除
     @PostExchange(url = "/rest/2.0/image-classify/v1/realtime_search/product/delete")

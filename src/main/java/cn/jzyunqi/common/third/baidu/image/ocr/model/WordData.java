@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class AccurateBasicResponse extends BaiduRspV1 {
+public class WordData extends BaiduRspV1 {
 
     /**
      * 图像方向，当detect_direction=true时存在

@@ -5,7 +5,6 @@ import cn.jzyunqi.common.third.baidu.common.BaiduHttpExchange;
 import cn.jzyunqi.common.third.baidu.common.model.BaiduRspV1;
 import cn.jzyunqi.common.third.baidu.image.search.model.ProductData;
 import cn.jzyunqi.common.third.baidu.image.search.model.ProductPagData;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
@@ -16,7 +15,7 @@ import org.springframework.web.service.annotation.PostExchange;
  */
 @BaiduHttpExchange
 @HttpExchange(url = "https://aip.baidubce.com", accept = {"application/json"}, contentType = "application/x-www-form-urlencoded")
-public interface BaiduImgClassifyApiProxy {
+public interface BaiduImgSearchApiProxy {
 
     //图像搜索 - 商品图片搜索 - 入库
     @PostExchange(url = "/rest/2.0/image-classify/v1/realtime_search/product/add")

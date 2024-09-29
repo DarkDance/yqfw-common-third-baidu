@@ -2,7 +2,7 @@ package cn.jzyunqi.common.third.baidu.image.ocr.enums;
 
 /**
  * @author wiiyaya
- * @date 2020/9/21.
+ * @since 2020/9/21.
  */
 public enum Language {
     /**

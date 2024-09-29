@@ -7,14 +7,17 @@ import cn.jzyunqi.common.third.baidu.common.BaiduTokenApiProxy;
 import cn.jzyunqi.common.third.baidu.common.constant.BaiduCache;
 import cn.jzyunqi.common.third.baidu.common.model.ClientTokenData;
 import cn.jzyunqi.common.third.baidu.common.model.ClientTokenRedisDto;
-import cn.jzyunqi.common.third.baidu.image.search.BaiduImgClassifyApiProxy;
+import cn.jzyunqi.common.third.baidu.image.ocr.BaiduImgOcrApiProxy;
+import cn.jzyunqi.common.third.baidu.image.ocr.enums.EngGranularity;
+import cn.jzyunqi.common.third.baidu.image.ocr.enums.Language;
+import cn.jzyunqi.common.third.baidu.image.ocr.enums.RecognizeGranularity;
+import cn.jzyunqi.common.third.baidu.image.ocr.model.WordData;
+import cn.jzyunqi.common.third.baidu.image.search.BaiduImgSearchApiProxy;
 import cn.jzyunqi.common.third.baidu.image.search.model.ProductPagData;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
 
-import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +34,10 @@ public class BaiduImgClient {
     private BaiduTokenApiProxy baiduTokenApiProxy;
 
     @Resource
-    private BaiduImgClassifyApiProxy baiduImgClassifyApiProxy;
+    private BaiduImgOcrApiProxy baiduImgOcrApiProxy;
+
+    @Resource
+    private BaiduImgSearchApiProxy baiduImgSearchApiProxy;
 
     @Resource
     private BaiduImgClientConfig baiduImgClientConfig;
@@ -39,37 +45,56 @@ public class BaiduImgClient {
     @Resource
     private RedisHelper redisHelper;
 
+    public final Ocr ocr = new Ocr();
     public final Search search = new Search();
+
+    public class Ocr {
+        //文字识别 - 通用文字识别（高精度版）
+        public WordData wordsList(org.springframework.core.io.Resource image,
+                                  Language languageType,
+                                  Boolean detectDirection,
+                                  Boolean paragraph,
+                                  Boolean probability,
+                                  Boolean multiDirectionalRecognize
+        ) throws BusinessException {
+            return baiduImgOcrApiProxy.wordsList(getClientToken(), getResourceBase64(image), null, null, null, null, null, languageType, detectDirection, paragraph, probability, multiDirectionalRecognize);
+        }
+
+        //文字识别 - 通用文字识别（高精度版）
+        public WordData wordsWithPositionList(org.springframework.core.io.Resource image,
+                                              Language languageType,
+                                              EngGranularity engGranularity,
+                                              RecognizeGranularity recognizeGranularity,
+                                              Boolean detectDirection,
+                                              Boolean vertexesLocation,
+                                              Boolean paragraph,
+                                              Boolean probability,
+                                              Boolean charProbability,
+                                              Boolean multiDirectionalRecognize
+        ) throws BusinessException {
+            return baiduImgOcrApiProxy.wordsWithPositionList(getClientToken(), getResourceBase64(image), null, null, null, null, null, languageType, engGranularity, recognizeGranularity, detectDirection, vertexesLocation, paragraph, probability, charProbability, multiDirectionalRecognize);
+        }
+    }
 
     public class Search {
         //图像搜索 - 商品图片搜索 - 入库
         public String productAdd(org.springframework.core.io.Resource image, String brief) throws BusinessException {
-            return baiduImgClassifyApiProxy.productAdd(getClientToken(), getImageBase64(image), null, brief, null, null).getContSign();
+            return baiduImgSearchApiProxy.productAdd(getClientToken(), getResourceBase64(image), null, brief, null, null).getContSign();
         }
 
         //图像搜索 - 商品图片搜索 - 检索
         public ProductPagData productSearch(org.springframework.core.io.Resource image, Integer start, Integer limit) throws BusinessException {
-            return baiduImgClassifyApiProxy.productSearch(getClientToken(), getImageBase64(image), null, null, null, null, start, limit);
+            return baiduImgSearchApiProxy.productSearch(getClientToken(), getResourceBase64(image), null, null, null, null, start, limit);
         }
 
         //图像搜索 - 商品图片搜索 - 删除
         public void productDelete(String contSign) throws BusinessException {
-            baiduImgClassifyApiProxy.productDelete(getClientToken(), null, null, contSign);
+            baiduImgSearchApiProxy.productDelete(getClientToken(), null, null, contSign);
         }
 
         //图像搜索 - 商品图片搜索 - 更新
         public void productUpdate(String contSign, String brief, String classId1, String classId2) throws BusinessException {
-            baiduImgClassifyApiProxy.productUpdate(getClientToken(), null, null, contSign, brief, classId1, classId2);
-        }
-
-        private static String getImageBase64(org.springframework.core.io.Resource image) throws BusinessException {
-            String base64Image;
-            try {
-                base64Image = DigestUtilPlus.Base64.encodeBase64String(image.getContentAsByteArray());
-            } catch (IOException e) {
-                throw new BusinessException(e, "图片读取失败");
-            }
-            return base64Image;
+            baiduImgSearchApiProxy.productUpdate(getClientToken(), null, null, contSign, brief, classId1, classId2);
         }
     }
 
@@ -114,5 +139,15 @@ public class BaiduImgClient {
 
     private String getClientTokenKey() {
         return "client_token:" + baiduImgClientConfig.getAppId();
+    }
+
+    private static String getResourceBase64(org.springframework.core.io.Resource resource) throws BusinessException {
+        String base64Content;
+        try {
+            base64Content = DigestUtilPlus.Base64.encodeBase64String(resource.getContentAsByteArray());
+        } catch (IOException e) {
+            throw new BusinessException(e, "资源读取失败");
+        }
+        return base64Content;
     }
 }

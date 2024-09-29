@@ -2,7 +2,8 @@ package cn.jzyunqi.common.third.baidu.image;
 
 import cn.jzyunqi.common.third.baidu.common.BaiduHttpExchangeWrapper;
 import cn.jzyunqi.common.third.baidu.common.BaiduTokenApiProxy;
-import cn.jzyunqi.common.third.baidu.image.search.BaiduImgClassifyApiProxy;
+import cn.jzyunqi.common.third.baidu.image.ocr.BaiduImgOcrApiProxy;
+import cn.jzyunqi.common.third.baidu.image.search.BaiduImgSearchApiProxy;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,10 +40,18 @@ public class BaiduImgConfig {
     }
 
     @Bean
-    public BaiduImgClassifyApiProxy baiduImgClassifyApiProxy(WebClient.Builder webClientBuilder) {
+    public BaiduImgSearchApiProxy baiduImgSearchApiProxy(WebClient.Builder webClientBuilder) {
         WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
-        return factory.createClient(BaiduImgClassifyApiProxy.class);
+        return factory.createClient(BaiduImgSearchApiProxy.class);
+    }
+
+    @Bean
+    public BaiduImgOcrApiProxy baiduImgOcrApiProxy(WebClient.Builder webClientBuilder) {
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
+        return factory.createClient(BaiduImgOcrApiProxy.class);
     }
 }

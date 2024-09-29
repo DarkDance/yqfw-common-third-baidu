@@ -16,12 +16,12 @@ public class GPSConverterUtils {
     /**
      * gps84_To_Gcj02
      */
-    public static Location gps84ToGcj02(double lat, double lon) {
-        if (outOfChina(lat, lon)) {
-            return new Location(String.valueOf(lat), String.valueOf(lon));
+    public static Location gps84ToGcj02(double lat, double lng) {
+        if (outOfChina(lat, lng)) {
+            return new Location(String.valueOf(lat), String.valueOf(lng));
         }
-        double dLat = transformLat(lon - 105.0, lat - 35.0);
-        double dLon = transformLon(lon - 105.0, lat - 35.0);
+        double dLat = transformLat(lng - 105.0, lat - 35.0);
+        double dLon = transformLon(lng - 105.0, lat - 35.0);
         double radLat = lat / 180.0 * PI;
         double magic = Math.sin(radLat);
         magic = 1 - EE * magic * magic;
@@ -29,15 +29,15 @@ public class GPSConverterUtils {
         dLat = (dLat * 180.0) / ((A * (1 - EE)) / (magic * sqrtMagic) * PI);
         dLon = (dLon * 180.0) / (A / sqrtMagic * Math.cos(radLat) * PI);
         double mgLat = lat + dLat;
-        double mgLon = lon + dLon;
+        double mgLon = lng + dLon;
         return new Location(String.valueOf(mgLat), String.valueOf(mgLon));
     }
 
     /**
      * gcj02_To_Bd09
      */
-    public static Location gcj02ToBd09(double gg_lat, double gg_lon) {
-        double x = gg_lon;
+    public static Location gcj02ToBd09(double gg_lat, double gg_lng) {
+        double x = gg_lng;
         double y = gg_lat;
         double z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * X_PI);
         double theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * X_PI);
@@ -49,8 +49,8 @@ public class GPSConverterUtils {
     /**
      * bd09_To_Gcj02
      */
-    public static Location bd09ToGcj02(double bd_lat, double bd_lon) {
-        double x = bd_lon - 0.0065;
+    public static Location bd09ToGcj02(double bd_lat, double bd_lng) {
+        double x = bd_lng - 0.0065;
         double y = bd_lat - 0.006;
         double z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * X_PI);
         double theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * X_PI);
@@ -59,8 +59,8 @@ public class GPSConverterUtils {
         return new Location(String.valueOf(gg_lat), String.valueOf(gg_lon));
     }
 
-    private static Boolean outOfChina(double lat, double lon) {
-        if (lon < 72.004 || lon > 137.8347) {
+    private static Boolean outOfChina(double lat, double lng) {
+        if (lng < 72.004 || lng > 137.8347) {
             return true;
         }
         return lat < 0.8293 || lat > 55.8271;

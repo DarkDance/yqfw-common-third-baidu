@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.baidu.response;
+package cn.jzyunqi.common.third.baidu.common;
 
 import cn.jzyunqi.common.third.baidu.common.model.BaiduRspV2;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -3,7 +3,7 @@ package cn.jzyunqi.common.third.baidu.image.ocr;
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.third.baidu.image.ocr.enums.Granularity;
 import cn.jzyunqi.common.third.baidu.image.ocr.enums.Language;
-import cn.jzyunqi.common.third.baidu.response.AccurateBasicResponse;
+import cn.jzyunqi.common.third.baidu.image.ocr.model.AccurateBasicResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.http.HttpHeaders;

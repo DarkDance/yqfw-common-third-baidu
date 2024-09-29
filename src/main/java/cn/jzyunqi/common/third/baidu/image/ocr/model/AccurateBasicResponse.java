@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.baidu.response;
+package cn.jzyunqi.common.third.baidu.image.ocr.model;
 
 import cn.jzyunqi.common.third.baidu.common.model.BaiduRspV1;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -3,7 +3,6 @@ package cn.jzyunqi.common.third.baidu.common;
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.redis.Cache;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
-import cn.jzyunqi.common.third.baidu.response.ApiTokenResponse;
 import cn.jzyunqi.common.third.baidu.common.model.BaiduRspV2;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

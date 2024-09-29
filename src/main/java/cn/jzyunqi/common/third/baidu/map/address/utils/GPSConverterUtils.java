@@ -1,6 +1,6 @@
-package cn.jzyunqi.common.third.baidu.map;
+package cn.jzyunqi.common.third.baidu.map.address.utils;
 
-import cn.jzyunqi.common.third.baidu.map.model.Location;
+import cn.jzyunqi.common.third.baidu.map.address.model.Location;
 
 import java.math.BigDecimal;
 

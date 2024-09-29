@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.baidu.map.model;
+package cn.jzyunqi.common.third.baidu.map.address.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class LonLatAddress implements Serializable {
+public class LngLatAddress implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 9140958388974362525L;
 

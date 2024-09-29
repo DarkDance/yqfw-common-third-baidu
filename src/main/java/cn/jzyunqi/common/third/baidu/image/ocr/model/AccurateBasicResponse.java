@@ -16,12 +16,6 @@ import java.util.List;
 public class AccurateBasicResponse extends BaiduRspV1 {
 
     /**
-     * 请求id
-     */
-    @JsonProperty("log_id")
-    private Long logId;
-
-    /**
      * 图像方向，当detect_direction=true时存在
      */
     private Integer direction;

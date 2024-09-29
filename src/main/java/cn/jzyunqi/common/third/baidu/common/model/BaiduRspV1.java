@@ -23,4 +23,10 @@ public class BaiduRspV1 {
      */
     @JsonProperty("error_msg")
     private String errorMsg;
+
+    /**
+     * 唯一请求 ID，用于问题排查
+     */
+    @JsonProperty("log_id")
+    private String logId;
 }

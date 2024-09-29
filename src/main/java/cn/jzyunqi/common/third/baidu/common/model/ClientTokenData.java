@@ -1,18 +1,18 @@
-package cn.jzyunqi.common.third.baidu.common;
+package cn.jzyunqi.common.third.baidu.common.model;
 
-import cn.jzyunqi.common.third.baidu.common.model.BaiduRspV2;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author wiiyaya
- * @date 2020/9/21.
+ * @since 2024/9/29
  */
 @Getter
 @Setter
-public class ApiTokenResponse extends BaiduRspV2 {
-    private static final long serialVersionUID = -8802987797086759958L;
+@ToString
+public class ClientTokenData extends BaiduRspV2{
 
     /**
      * 授权token

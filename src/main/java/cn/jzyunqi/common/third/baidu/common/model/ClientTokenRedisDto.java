@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.baidu.common;
+package cn.jzyunqi.common.third.baidu.common.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,13 +9,13 @@ import java.time.LocalDateTime;
 
 /**
  * @author wiiyaya
- * @date 2020/9/21.
+ * @since 2024/9/29
  */
 @Getter
 @Setter
-public class AiTokenRedisDto implements Serializable {
+public class ClientTokenRedisDto implements Serializable {
     @Serial
-    private static final long serialVersionUID = -6450423948955549727L;
+    private static final long serialVersionUID = -3361217292124952710L;
 
     /**
      * 授权token

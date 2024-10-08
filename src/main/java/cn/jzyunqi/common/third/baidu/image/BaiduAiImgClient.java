@@ -8,15 +8,21 @@ import cn.jzyunqi.common.third.baidu.common.constant.BaiduCache;
 import cn.jzyunqi.common.third.baidu.common.model.ClientTokenData;
 import cn.jzyunqi.common.third.baidu.common.model.ClientTokenRedisDto;
 import cn.jzyunqi.common.third.baidu.image.ai.BaiduAiImgApiProxy;
-import cn.jzyunqi.common.third.baidu.image.ai.enums.ResolutionType;
+import cn.jzyunqi.common.third.baidu.image.ai.enums.TaskStatus;
 import cn.jzyunqi.common.third.baidu.image.ai.model.Text2ImgData;
+import cn.jzyunqi.common.third.baidu.image.ai.model.Text2ImgDataV2;
 import cn.jzyunqi.common.third.baidu.image.ai.model.Text2ImgParam;
+import cn.jzyunqi.common.third.baidu.image.ai.model.Text2ImgParamV2;
 import cn.jzyunqi.common.third.baidu.image.ai.model.Text2ImgRsp;
+import cn.jzyunqi.common.third.baidu.image.ai.model.Text2ImgRspV2;
+import cn.jzyunqi.common.utils.DigestUtilPlus;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -45,10 +51,10 @@ public class BaiduAiImgClient {
     public class Img {
 
         //AI作画 - 基础版 - 请求绘画
-        public Long text2Image(String text, ResolutionType resolution, String style) throws BusinessException {
+        public Long text2Image(String prompt, Integer width, Integer height, String style) throws BusinessException {
             Text2ImgParam request = new Text2ImgParam();
-            request.setText(text);
-            request.setResolution(resolution.getValue());
+            request.setText(prompt);
+            request.setResolution(String.format("%d*%d", width, height));
             request.setStyle(style);
             request.setNum(1);
             //request.setTextContent("");
@@ -75,6 +81,55 @@ public class BaiduAiImgClient {
                 duration = Duration.parse("PT" + response.getData().getWaiting());
             } while (duration.toSeconds() > 0);
             return response.getData().getImgUrls().stream().map(Text2ImgData.ImgData::getImage).toList();
+        }
+
+        //AI作画 - 高级版/极速版 - 请求绘画
+        public String text2ImageV2Ex(String prompt, Integer width, Integer height, org.springframework.core.io.Resource image, Integer changeDegree, boolean speed) throws BusinessException {
+            Text2ImgParamV2 request = new Text2ImgParamV2();
+            request.setPrompt(prompt);
+            request.setWidth(width);
+            request.setHeight(height);
+            request.setImageNum(1);
+            request.setImage(getResourceBase64(image));
+            request.setChangeDegree(changeDegree);
+            //request.setTextContent("");
+            //request.setTaskTimeOut();
+            request.setTextCheck(1);
+            if (speed) {
+                return baiduNLPWenxinApiProxy.text2ImageEx(getClientToken(), request).getData().getTaskId();
+            } else {
+                return baiduNLPWenxinApiProxy.text2ImageV2(getClientToken(), request).getData().getTaskId();
+            }
+        }
+
+        //AI作画 - 高级版/极速版 - 查询结果
+        public List<String> getImgV2Ex(String taskId, boolean speed) throws BusinessException {
+            Text2ImgDataV2 request = new Text2ImgDataV2();
+            request.setTaskId(taskId);
+            Text2ImgRspV2 response;
+            do {
+                if (speed) {
+                    response = baiduNLPWenxinApiProxy.getImgEx(getClientToken(), request);
+                } else {
+                    response = baiduNLPWenxinApiProxy.getImgV2(getClientToken(), request);
+                }
+                log.info("任务{}等待中，等待时间：20秒", taskId);
+                try {
+                    TimeUnit.SECONDS.sleep(20);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            } while (!response.getData().getTaskProgress());
+
+            TaskStatus status = response.getData().getTaskStatus();
+            if (status == TaskStatus.SUCCESS) {
+                return response.getData().getSubTaskResultList().stream()
+                        .flatMap(subTaskResult -> subTaskResult.getFinalImageList().stream())
+                        .map(Text2ImgDataV2.ImgData::getImgUrl)
+                        .toList();
+            } else {
+                return new ArrayList<>();
+            }
         }
     }
 
@@ -119,5 +174,18 @@ public class BaiduAiImgClient {
 
     private String getClientTokenKey() {
         return "client_token:" + baiduNLPClientConfig.getAppId();
+    }
+
+    private static String getResourceBase64(org.springframework.core.io.Resource resource) throws BusinessException {
+        if (resource == null) {
+            return null;
+        }
+        String base64Content;
+        try {
+            base64Content = DigestUtilPlus.Base64.encodeBase64String(resource.getContentAsByteArray());
+        } catch (IOException e) {
+            throw new BusinessException(e, "资源读取失败");
+        }
+        return base64Content;
     }
 }

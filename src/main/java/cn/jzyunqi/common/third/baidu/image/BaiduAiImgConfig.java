@@ -30,7 +30,7 @@ public class BaiduAiImgConfig {
     }
 
     @Bean
-    public BaiduAiImgApiProxy baiduNLPWenxinApiProxy(WebClient.Builder webClientBuilder) {
+    public BaiduAiImgApiProxy baiduAiImgApiProxy(WebClient.Builder webClientBuilder) {
         WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();

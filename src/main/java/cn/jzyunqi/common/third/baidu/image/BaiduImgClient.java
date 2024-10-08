@@ -142,6 +142,9 @@ public class BaiduImgClient {
     }
 
     private static String getResourceBase64(org.springframework.core.io.Resource resource) throws BusinessException {
+        if (resource == null) {
+            return null;
+        }
         String base64Content;
         try {
             base64Content = DigestUtilPlus.Base64.encodeBase64String(resource.getContentAsByteArray());

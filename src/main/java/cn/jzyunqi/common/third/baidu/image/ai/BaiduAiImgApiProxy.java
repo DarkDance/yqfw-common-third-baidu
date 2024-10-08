@@ -35,7 +35,7 @@ public interface BaiduAiImgApiProxy {
 
     //AI作画 - 极速版 - 查询结果
     @PostExchange(url = "/rpc/2.0/wenxin/v1/extreme/getImg")
-    Text2ImgRspV2 getImgV2Ex(@RequestParam String access_token, @RequestBody Text2ImgDataV2 request) throws BusinessException;
+    Text2ImgRspV2 getImgEx(@RequestParam String access_token, @RequestBody Text2ImgDataV2 request) throws BusinessException;
 
     //AI作画 - 高级版 - 请求绘画
     @PostExchange(url = "/rpc/2.0/ernievilg/v1/txt2imgv2")

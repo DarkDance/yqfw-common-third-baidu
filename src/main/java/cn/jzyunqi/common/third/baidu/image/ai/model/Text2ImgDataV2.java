@@ -1,5 +1,6 @@
 package cn.jzyunqi.common.third.baidu.image.ai.model;
 
+import cn.jzyunqi.common.third.baidu.image.ai.enums.TaskStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,30 +23,50 @@ public class Text2ImgDataV2 {
     @JsonProperty("task_id")
     private String taskId;
 
-    private String task_status;
-    private Float task_progress_detail;
-    private Boolean task_progress;
+    @JsonProperty("task_status")
+    private TaskStatus taskStatus;
 
-    private List<SubTaskResult> sub_task_result_list;
+    @JsonProperty("task_progress_detail")
+    private Float taskProgressDetail;
+
+    @JsonProperty("task_progress")
+    private Boolean taskProgress;
+
+    @JsonProperty("sub_task_result_list")
+    private List<SubTaskResult> subTaskResultList;
 
     @Getter
     @Setter
     @ToString
     public static class SubTaskResult {
-        private String sub_task_status;
-        private Float sub_task_progress_detail;
-        private Boolean sub_task_progress;
-        private String sub_task_error_code;
-        private List<ImgData> final_image_list;
+        @JsonProperty("sub_task_status")
+        private TaskStatus subTaskStatus;
+
+        @JsonProperty("sub_task_progress_detail")
+        private Float subTaskProgressDetail;
+
+        @JsonProperty("sub_task_progress")
+        private Boolean subTaskProgress;
+
+        @JsonProperty("sub_task_error_code")
+        private String subTaskErrorCode;
+
+        @JsonProperty("final_image_list")
+        private List<ImgData> finalImageList;
     }
 
     @Getter
     @Setter
     @ToString
     public static class ImgData {
-        private String img_url;
+        @JsonProperty("img_url")
+        private String imgUrl;
+
         private String height;
+
         private String width;
-        private String img_approve_conclusion;
+
+        @JsonProperty("img_approve_conclusion")
+        private String imgApproveConclusion;
     }
 }

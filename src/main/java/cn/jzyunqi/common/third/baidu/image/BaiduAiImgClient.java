@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.baidu.nlp;
+package cn.jzyunqi.common.third.baidu.image;
 
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.redis.LockType;
@@ -7,11 +7,11 @@ import cn.jzyunqi.common.third.baidu.common.BaiduTokenApiProxy;
 import cn.jzyunqi.common.third.baidu.common.constant.BaiduCache;
 import cn.jzyunqi.common.third.baidu.common.model.ClientTokenData;
 import cn.jzyunqi.common.third.baidu.common.model.ClientTokenRedisDto;
-import cn.jzyunqi.common.third.baidu.nlp.wenxin.BaiduNLPWenxinApiProxy;
-import cn.jzyunqi.common.third.baidu.nlp.wenxin.enums.ResolutionType;
-import cn.jzyunqi.common.third.baidu.nlp.wenxin.model.Text2ImgData;
-import cn.jzyunqi.common.third.baidu.nlp.wenxin.model.Text2ImgParam;
-import cn.jzyunqi.common.third.baidu.nlp.wenxin.model.Text2ImgRsp;
+import cn.jzyunqi.common.third.baidu.image.ai.BaiduAiImgApiProxy;
+import cn.jzyunqi.common.third.baidu.image.ai.enums.ResolutionType;
+import cn.jzyunqi.common.third.baidu.image.ai.model.Text2ImgData;
+import cn.jzyunqi.common.third.baidu.image.ai.model.Text2ImgParam;
+import cn.jzyunqi.common.third.baidu.image.ai.model.Text2ImgRsp;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,19 +26,19 @@ import java.util.concurrent.locks.Lock;
  * @since 2024/10/8
  */
 @Slf4j
-public class BaiduNLPClient {
+public class BaiduAiImgClient {
 
     @Resource
     private BaiduTokenApiProxy baiduTokenApiProxy;
 
     @Resource
-    private BaiduNLPWenxinApiProxy baiduNLPWenxinApiProxy;
+    private BaiduAiImgApiProxy baiduNLPWenxinApiProxy;
 
     @Resource
     private RedisHelper redisHelper;
 
     @Resource
-    private BaiduNLPClientConfig baiduNLPClientConfig;
+    private BaiduAiImgClientConfig baiduNLPClientConfig;
 
     public final Img img = new Img();
 

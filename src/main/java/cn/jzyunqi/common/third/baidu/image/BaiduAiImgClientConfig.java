@@ -1,10 +1,10 @@
-package cn.jzyunqi.common.third.baidu.nlp;
+package cn.jzyunqi.common.third.baidu.image;
 
 /**
  * @author wiiyaya
  * @since 2024/10/8
  */
-public interface BaiduNLPClientConfig {
+public interface BaiduAiImgClientConfig {
 
     String getAppId();
 

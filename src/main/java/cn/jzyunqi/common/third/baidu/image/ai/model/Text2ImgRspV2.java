@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.baidu.nlp.wenxin.model;
+package cn.jzyunqi.common.third.baidu.image.ai.model;
 
 import cn.jzyunqi.common.third.baidu.common.model.BaiduRspV1;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Text2ImgRsp extends BaiduRspV1 {
+public class Text2ImgRspV2 extends BaiduRspV1 {
 
-    private Text2ImgData data;
+    private Text2ImgDataV2 data;
 }

@@ -1,11 +1,10 @@
-package cn.jzyunqi.common.third.baidu.nlp.wenxin.model;
+package cn.jzyunqi.common.third.baidu.image.ai.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 

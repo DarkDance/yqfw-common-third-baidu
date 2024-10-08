@@ -1,11 +1,7 @@
-package cn.jzyunqi.common.third.baidu.nlp;
+package cn.jzyunqi.common.third.baidu.image;
 
 import cn.jzyunqi.common.third.baidu.common.BaiduHttpExchangeWrapper;
-import cn.jzyunqi.common.third.baidu.common.BaiduTokenApiProxy;
-import cn.jzyunqi.common.third.baidu.image.BaiduImgClient;
-import cn.jzyunqi.common.third.baidu.image.ocr.BaiduImgOcrApiProxy;
-import cn.jzyunqi.common.third.baidu.image.search.BaiduImgSearchApiProxy;
-import cn.jzyunqi.common.third.baidu.nlp.wenxin.BaiduNLPWenxinApiProxy;
+import cn.jzyunqi.common.third.baidu.image.ai.BaiduAiImgApiProxy;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +16,7 @@ import java.time.Duration;
  * @since 2024/9/29
  */
 @Configuration
-public class BaiduNLPConfig {
+public class BaiduAiImgConfig {
 
     @Bean
     @ConditionalOnMissingBean
@@ -29,15 +25,15 @@ public class BaiduNLPConfig {
     }
 
     @Bean
-    public BaiduNLPClient baiduNLPClient() {
-        return new BaiduNLPClient();
+    public BaiduAiImgClient baiduNLPClient() {
+        return new BaiduAiImgClient();
     }
 
     @Bean
-    public BaiduNLPWenxinApiProxy baiduNLPWenxinApiProxy(WebClient.Builder webClientBuilder) {
+    public BaiduAiImgApiProxy baiduNLPWenxinApiProxy(WebClient.Builder webClientBuilder) {
         WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
-        return factory.createClient(BaiduNLPWenxinApiProxy.class);
+        return factory.createClient(BaiduAiImgApiProxy.class);
     }
 }

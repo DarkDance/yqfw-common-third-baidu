@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.baidu.nlp.wenxin.enums;
+package cn.jzyunqi.common.third.baidu.image.ai.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

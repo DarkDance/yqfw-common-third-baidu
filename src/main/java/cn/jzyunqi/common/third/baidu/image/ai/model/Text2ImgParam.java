@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.baidu.nlp.wenxin.model;
+package cn.jzyunqi.common.third.baidu.image.ai.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -43,5 +43,6 @@ public class Text2ImgParam {
     /**
      * 模型侧的提示词检测开关，仅支持输入0和1。0：关闭，1：开启（默认值）。开启时，如果提示词未通过模型侧提示词检测则子任务的sub_task_error_code会返回501，无法生成图片。
      */
+    @JsonProperty("text_check")
     private Integer textCheck;
 }

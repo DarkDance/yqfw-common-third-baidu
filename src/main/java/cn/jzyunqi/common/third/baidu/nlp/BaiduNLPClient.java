@@ -15,6 +15,7 @@ import cn.jzyunqi.common.third.baidu.nlp.wenxin.model.Text2ImgRsp;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -60,6 +61,16 @@ public class BaiduNLPClient {
             Text2ImgData request = new Text2ImgData();
             request.setTaskId(taskId);
             Text2ImgRsp response = baiduNLPWenxinApiProxy.getImg(getClientToken(), request);
+            Duration duration = Duration.parse("PT" + response.getData().getWaiting());
+            if(duration.toSeconds() > 0){
+                log.info("任务{}等待中，等待时间：{}秒", taskId, duration.toSeconds());
+                try {
+                    Thread.sleep(duration.toSeconds());
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                response = baiduNLPWenxinApiProxy.getImg(getClientToken(), request);
+            }
             return response.getData().getImgUrls().stream().map(Text2ImgData.ImgData::getImage).toList();
         }
     }

@@ -13,6 +13,7 @@ import lombok.Getter;
 public enum BaiduCache implements Cache {
 
     BAIDU_IMG_V(0L, Boolean.FALSE),
+    BAIDU_NLP_V(0L, Boolean.FALSE),
     ;
 
     private final Long expiration;

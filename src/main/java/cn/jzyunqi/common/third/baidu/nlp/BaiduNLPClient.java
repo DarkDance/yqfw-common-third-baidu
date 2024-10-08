@@ -60,17 +60,20 @@ public class BaiduNLPClient {
         public List<String> getImg(Long taskId) throws BusinessException {
             Text2ImgData request = new Text2ImgData();
             request.setTaskId(taskId);
-            Text2ImgRsp response = baiduNLPWenxinApiProxy.getImg(getClientToken(), request);
-            Duration duration = Duration.parse("PT" + response.getData().getWaiting());
-            if(duration.toSeconds() > 0){
-                log.info("任务{}等待中，等待时间：{}秒", taskId, duration.toSeconds());
-                try {
-                    Thread.sleep(duration.toSeconds());
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+            Text2ImgRsp response;
+            Duration duration = Duration.ZERO;
+            do {
+                if (duration.toSeconds() > 0) {
+                    log.info("任务{}等待中，等待时间：{}秒", taskId, duration.toSeconds());
+                    try {
+                        TimeUnit.SECONDS.sleep(duration.toSeconds());
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
                 response = baiduNLPWenxinApiProxy.getImg(getClientToken(), request);
-            }
+                duration = Duration.parse("PT" + response.getData().getWaiting());
+            } while (duration.toSeconds() > 0);
             return response.getData().getImgUrls().stream().map(Text2ImgData.ImgData::getImage).toList();
         }
     }

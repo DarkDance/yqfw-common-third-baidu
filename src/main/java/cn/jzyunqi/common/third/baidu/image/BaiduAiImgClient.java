@@ -101,24 +101,25 @@ public class BaiduAiImgClient {
 
             Text2ImgDataV2 queryRequest = new Text2ImgDataV2();
             queryRequest.setTaskId(taskId);
-            Text2ImgRspV2 response;
-
+            Text2ImgRspV2 response = null;
             int attempt = 0;
             do {
                 if (attempt > 4) {
                     throw new BusinessException("任务超时");
                 }
+                if (attempt > 0) {
+                    try {
+                        int jitterDelayMillis = jitterDelayMillis(attempt);
+                        log.info("任务{}等待中，等待时间：{}毫秒, 任务状态：{}, 任务进度：{}", taskId, jitterDelayMillis, response.getData().getTaskStatus(), response.getData().getTaskProgressDetail());
+                        TimeUnit.MILLISECONDS.sleep(jitterDelayMillis);
+                    } catch (InterruptedException e) {
+                        throw new BusinessException(e, "任务超时");
+                    }
+                }
+                attempt++;
                 response = speed ?
                         baiduNLPWenxinApiProxy.getImgEx(getClientToken(), queryRequest) :
                         baiduNLPWenxinApiProxy.getImgV2(getClientToken(), queryRequest);
-                try {
-                    int jitterDelayMillis = jitterDelayMillis(attempt);
-                    attempt++;
-                    log.info("任务{}等待中，等待时间：{}毫秒, 任务状态：{}, 任务进度：{}", taskId, jitterDelayMillis, response.getData().getTaskStatus(), response.getData().getTaskProgressDetail());
-                    TimeUnit.MILLISECONDS.sleep(jitterDelayMillis);
-                } catch (InterruptedException e) {
-                    throw new BusinessException(e, "任务超时");
-                }
             } while (!response.getData().getTaskProgress());
 
             List<Text2ImgDataV2.ImgData> imgData = response.getData().getSubTaskResultList().stream()

@@ -16,6 +16,7 @@ import cn.jzyunqi.common.third.baidu.image.ai.model.Text2ImgParamV2;
 import cn.jzyunqi.common.third.baidu.image.ai.model.Text2ImgRsp;
 import cn.jzyunqi.common.third.baidu.image.ai.model.Text2ImgRspV2;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
+import cn.jzyunqi.common.utils.RandomUtilPlus;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,6 +25,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -50,8 +53,8 @@ public class BaiduAiImgClient {
 
     public class Img {
 
-        //AI作画 - 基础版 - 请求绘画
-        public Long text2Image(String prompt, Integer width, Integer height, String style) throws BusinessException {
+        //AI作画 - 基础版
+        public List<String> generateImage(String prompt, Integer width, Integer height, String style) throws BusinessException {
             Text2ImgParam request = new Text2ImgParam();
             request.setText(prompt);
             request.setResolution(String.format("%d*%d", width, height));
@@ -59,13 +62,10 @@ public class BaiduAiImgClient {
             request.setNum(1);
             //request.setTextContent("");
             request.setTextCheck(1);
-            return baiduNLPWenxinApiProxy.text2Image(getClientToken(), request).getData().getTaskId();
-        }
+            Long taskId = baiduNLPWenxinApiProxy.text2Image(getClientToken(), request).getData().getTaskId();
 
-        //AI作画 - 基础版 - 查询结果
-        public List<String> getImg(Long taskId) throws BusinessException {
-            Text2ImgData request = new Text2ImgData();
-            request.setTaskId(taskId);
+            Text2ImgData queryRequest = new Text2ImgData();
+            queryRequest.setTaskId(taskId);
             Text2ImgRsp response;
             Duration duration = Duration.ZERO;
             do {
@@ -77,14 +77,14 @@ public class BaiduAiImgClient {
                         throw new RuntimeException(e);
                     }
                 }
-                response = baiduNLPWenxinApiProxy.getImg(getClientToken(), request);
+                response = baiduNLPWenxinApiProxy.getImg(getClientToken(), queryRequest);
                 duration = Duration.parse("PT" + response.getData().getWaiting());
             } while (duration.toSeconds() > 0);
             return response.getData().getImgUrls().stream().map(Text2ImgData.ImgData::getImage).toList();
         }
 
-        //AI作画 - 高级版/极速版 - 请求绘画
-        public String text2ImageV2Ex(String prompt, Integer width, Integer height, org.springframework.core.io.Resource image, Integer changeDegree, boolean speed) throws BusinessException {
+        //AI作画 - 高级版/急速版 - 请求绘画
+        public List<String> generateImageV2(String prompt, Integer width, Integer height, org.springframework.core.io.Resource image, Integer changeDegree, boolean speed) throws BusinessException {
             Text2ImgParamV2 request = new Text2ImgParamV2();
             request.setPrompt(prompt);
             request.setWidth(width);
@@ -95,41 +95,37 @@ public class BaiduAiImgClient {
             //request.setTextContent("");
             //request.setTaskTimeOut();
             request.setTextCheck(1);
-            if (speed) {
-                return baiduNLPWenxinApiProxy.text2ImageEx(getClientToken(), request).getData().getTaskId();
-            } else {
-                return baiduNLPWenxinApiProxy.text2ImageV2(getClientToken(), request).getData().getTaskId();
-            }
-        }
+            String taskId = speed ?
+                    baiduNLPWenxinApiProxy.text2ImageEx(getClientToken(), request).getData().getTaskId() :
+                    baiduNLPWenxinApiProxy.text2ImageV2(getClientToken(), request).getData().getTaskId();
 
-        //AI作画 - 高级版/极速版 - 查询结果
-        public List<String> getImgV2Ex(String taskId, boolean speed) throws BusinessException {
-            Text2ImgDataV2 request = new Text2ImgDataV2();
-            request.setTaskId(taskId);
+            Text2ImgDataV2 queryRequest = new Text2ImgDataV2();
+            queryRequest.setTaskId(taskId);
             Text2ImgRspV2 response;
+
+            int attempt = 0;
             do {
-                if (speed) {
-                    response = baiduNLPWenxinApiProxy.getImgEx(getClientToken(), request);
-                } else {
-                    response = baiduNLPWenxinApiProxy.getImgV2(getClientToken(), request);
-                }
-                log.info("任务{}等待中，等待时间：20秒", taskId);
+                response = speed ?
+                        baiduNLPWenxinApiProxy.getImgEx(getClientToken(), queryRequest) :
+                        baiduNLPWenxinApiProxy.getImgV2(getClientToken(), queryRequest);
                 try {
-                    TimeUnit.SECONDS.sleep(20);
+                    int jitterDelayMillis = jitterDelayMillis(attempt);
+                    attempt++;
+                    log.info("任务{}等待中，等待时间：{}毫秒", taskId, jitterDelayMillis);
+                    TimeUnit.MILLISECONDS.sleep(jitterDelayMillis);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    throw new BusinessException(e, "任务超时");
+                }
+                if (attempt > 3) {
+                    throw new BusinessException("任务超时");
                 }
             } while (!response.getData().getTaskProgress());
 
-            TaskStatus status = response.getData().getTaskStatus();
-            if (status == TaskStatus.SUCCESS) {
-                return response.getData().getSubTaskResultList().stream()
-                        .flatMap(subTaskResult -> subTaskResult.getFinalImageList().stream())
-                        .map(Text2ImgDataV2.ImgData::getImgUrl)
-                        .toList();
-            } else {
-                return new ArrayList<>();
-            }
+            List<Text2ImgDataV2.ImgData> imgData = response.getData().getSubTaskResultList().stream()
+                    .filter(subTaskResult -> subTaskResult.getSubTaskStatus() == TaskStatus.SUCCESS)
+                    .flatMap(subTaskResult -> subTaskResult.getFinalImageList().stream())
+                    .toList();
+            return imgData.stream().map(Text2ImgDataV2.ImgData::getImgUrl).toList();
         }
     }
 
@@ -187,5 +183,11 @@ public class BaiduAiImgClient {
             throw new BusinessException(e, "资源读取失败");
         }
         return base64Content;
+    }
+
+    private int jitterDelayMillis(int attempt) {
+        double delay = (double) 5000 * Math.pow(1.5, attempt);
+        double jitter = delay * 0.2;
+        return (int) (delay + (double) RandomUtilPlus.Number.nextInt(0, (int) jitter));
     }
 }

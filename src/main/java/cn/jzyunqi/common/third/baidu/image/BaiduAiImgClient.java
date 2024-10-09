@@ -105,19 +105,19 @@ public class BaiduAiImgClient {
 
             int attempt = 0;
             do {
+                if (attempt > 4) {
+                    throw new BusinessException("任务超时");
+                }
                 response = speed ?
                         baiduNLPWenxinApiProxy.getImgEx(getClientToken(), queryRequest) :
                         baiduNLPWenxinApiProxy.getImgV2(getClientToken(), queryRequest);
                 try {
                     int jitterDelayMillis = jitterDelayMillis(attempt);
                     attempt++;
-                    log.info("任务{}等待中，等待时间：{}毫秒", taskId, jitterDelayMillis);
+                    log.info("任务{}等待中，等待时间：{}毫秒, 任务状态：{}, 任务进度：{}", taskId, jitterDelayMillis, response.getData().getTaskStatus(), response.getData().getTaskProgressDetail());
                     TimeUnit.MILLISECONDS.sleep(jitterDelayMillis);
                 } catch (InterruptedException e) {
                     throw new BusinessException(e, "任务超时");
-                }
-                if (attempt > 3) {
-                    throw new BusinessException("任务超时");
                 }
             } while (!response.getData().getTaskProgress());
 

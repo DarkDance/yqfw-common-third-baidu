@@ -29,11 +29,11 @@ public interface BaiduAiImgApiProxy {
     @PostExchange(url = "/rpc/2.0/wenxin/v1/basic/getImg")
     Text2ImgRsp getImg(@RequestParam String access_token, @RequestBody Text2ImgData request) throws BusinessException;
 
-    //AI作画 - 极速版 - 请求绘画
+    //AI作画 - Turbo极速版，降低画质，提升速度 - 请求绘画
     @PostExchange(url = "/rpc/2.0/wenxin/v1/extreme/textToImage")
     Text2ImgRspV2 text2ImageEx(@RequestParam String access_token, @RequestBody Text2ImgParamV2 request) throws BusinessException;
 
-    //AI作画 - 极速版 - 查询结果
+    //AI作画 - Turbo极速版，降低画质，提升速度 - 查询结果
     @PostExchange(url = "/rpc/2.0/wenxin/v1/extreme/getImg")
     Text2ImgRspV2 getImgEx(@RequestParam String access_token, @RequestBody Text2ImgDataV2 request) throws BusinessException;
 

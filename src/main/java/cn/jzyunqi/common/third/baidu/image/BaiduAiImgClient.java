@@ -104,9 +104,6 @@ public class BaiduAiImgClient {
             Text2ImgRspV2 response = null;
             int attempt = 0;
             do {
-                if (attempt > 4) {
-                    throw new BusinessException("任务超时");
-                }
                 if (attempt > 0) {
                     try {
                         int jitterDelayMillis = jitterDelayMillis(attempt);

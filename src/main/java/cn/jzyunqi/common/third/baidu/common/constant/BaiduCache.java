@@ -4,6 +4,8 @@ import cn.jzyunqi.common.feature.redis.Cache;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.time.Duration;
+
 /**
  * @author wiiyaya
  * @since 2024/9/29
@@ -12,11 +14,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum BaiduCache implements Cache {
 
-    BAIDU_IMG_V(0L, Boolean.FALSE),
-    BAIDU_NLP_V(0L, Boolean.FALSE),
+    THIRD_BAIDU_IMG_V(Duration.ZERO, Boolean.FALSE),
+    THIRD_BAIDU_NLP_V(Duration.ZERO, Boolean.FALSE),
     ;
 
-    private final Long expiration;
+    private final Duration expiration;
 
     private final Boolean autoRenew;
 }

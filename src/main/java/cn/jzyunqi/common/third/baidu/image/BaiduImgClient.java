@@ -99,17 +99,17 @@ public class BaiduImgClient {
     }
 
     private String getClientToken() throws BusinessException {
-        ClientTokenRedisDto clientToken = (ClientTokenRedisDto) redisHelper.vGet(BaiduCache.BAIDU_IMG_V, getClientTokenKey());
+        ClientTokenRedisDto clientToken = (ClientTokenRedisDto) redisHelper.vGet(BaiduCache.THIRD_BAIDU_IMG_V, getClientTokenKey());
         if (clientToken != null && LocalDateTime.now().isBefore(clientToken.getExpireTime())) {
             return clientToken.getToken();
         }
-        Lock lock = redisHelper.getLock(BaiduCache.BAIDU_IMG_V, getClientTokenKey().concat(":lock"), LockType.NORMAL);
+        Lock lock = redisHelper.getLock(BaiduCache.THIRD_BAIDU_IMG_V, getClientTokenKey().concat(":lock"), LockType.NORMAL);
         long timeOutMillis = System.currentTimeMillis() + 3000;
         boolean locked = false;
         try {
             do {
                 // 防止多线程同时获取accessToken
-                clientToken = (ClientTokenRedisDto) redisHelper.vGet(BaiduCache.BAIDU_IMG_V, getClientTokenKey());
+                clientToken = (ClientTokenRedisDto) redisHelper.vGet(BaiduCache.THIRD_BAIDU_IMG_V, getClientTokenKey());
                 if (clientToken != null && LocalDateTime.now().isBefore(clientToken.getExpireTime())) {
                     return clientToken.getToken();
                 }
@@ -126,7 +126,7 @@ public class BaiduImgClient {
             clientToken.setToken(clientTokenData.getAccessToken()); //获取到的凭证
             clientToken.setExpireTime(LocalDateTime.now().plusSeconds(clientTokenData.getExpiresIn()).minusSeconds(120)); //凭证有效时间，单位：秒
 
-            redisHelper.vPut(BaiduCache.BAIDU_IMG_V, getClientTokenKey(), clientToken);
+            redisHelper.vPut(BaiduCache.THIRD_BAIDU_IMG_V, getClientTokenKey(), clientToken);
             return clientTokenData.getAccessToken();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

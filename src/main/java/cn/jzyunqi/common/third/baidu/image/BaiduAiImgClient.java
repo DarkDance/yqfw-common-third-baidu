@@ -23,10 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -128,17 +125,17 @@ public class BaiduAiImgClient {
     }
 
     private String getClientToken() throws BusinessException {
-        ClientTokenRedisDto clientToken = (ClientTokenRedisDto) redisHelper.vGet(BaiduCache.BAIDU_NLP_V, getClientTokenKey());
+        ClientTokenRedisDto clientToken = (ClientTokenRedisDto) redisHelper.vGet(BaiduCache.THIRD_BAIDU_NLP_V, getClientTokenKey());
         if (clientToken != null && LocalDateTime.now().isBefore(clientToken.getExpireTime())) {
             return clientToken.getToken();
         }
-        Lock lock = redisHelper.getLock(BaiduCache.BAIDU_NLP_V, getClientTokenKey().concat(":lock"), LockType.NORMAL);
+        Lock lock = redisHelper.getLock(BaiduCache.THIRD_BAIDU_NLP_V, getClientTokenKey().concat(":lock"), LockType.NORMAL);
         long timeOutMillis = System.currentTimeMillis() + 3000;
         boolean locked = false;
         try {
             do {
                 // 防止多线程同时获取accessToken
-                clientToken = (ClientTokenRedisDto) redisHelper.vGet(BaiduCache.BAIDU_NLP_V, getClientTokenKey());
+                clientToken = (ClientTokenRedisDto) redisHelper.vGet(BaiduCache.THIRD_BAIDU_NLP_V, getClientTokenKey());
                 if (clientToken != null && LocalDateTime.now().isBefore(clientToken.getExpireTime())) {
                     return clientToken.getToken();
                 }
@@ -155,7 +152,7 @@ public class BaiduAiImgClient {
             clientToken.setToken(clientTokenData.getAccessToken()); //获取到的凭证
             clientToken.setExpireTime(LocalDateTime.now().plusSeconds(clientTokenData.getExpiresIn()).minusSeconds(120)); //凭证有效时间，单位：秒
 
-            redisHelper.vPut(BaiduCache.BAIDU_NLP_V, getClientTokenKey(), clientToken);
+            redisHelper.vPut(BaiduCache.THIRD_BAIDU_NLP_V, getClientTokenKey(), clientToken);
             return clientTokenData.getAccessToken();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

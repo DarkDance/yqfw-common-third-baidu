@@ -77,7 +77,11 @@ public class BaiduAiImgClient {
                 response = baiduNLPWenxinApiProxy.getImg(getClientToken(), queryRequest);
                 duration = Duration.parse("PT" + response.getData().getWaiting());
             } while (duration.toSeconds() > 0);
-            return response.getData().getImgUrls().stream().map(Text2ImgData.ImgData::getImage).toList();
+            return response.getData().getImgUrls()
+                    .stream()
+                    .filter(imgData -> imgData.getImgApproveConclusion().equals("pass"))
+                    .map(Text2ImgData.ImgData::getImage)
+                    .toList();
         }
 
         //AI作画 - 高级版/急速版 - 请求绘画
@@ -119,6 +123,7 @@ public class BaiduAiImgClient {
             List<Text2ImgDataV2.ImgData> imgData = response.getData().getSubTaskResultList().stream()
                     .filter(subTaskResult -> subTaskResult.getSubTaskStatus() == TaskStatus.SUCCESS)
                     .flatMap(subTaskResult -> subTaskResult.getFinalImageList().stream())
+                    .filter(img -> img.getImgApproveConclusion().equals("pass"))
                     .toList();
             return imgData.stream().map(Text2ImgDataV2.ImgData::getImgUrl).toList();
         }

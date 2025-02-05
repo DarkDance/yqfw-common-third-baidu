@@ -188,6 +188,6 @@ public class BaiduAiImgClient {
     private int jitterDelayMillis(int attempt) {
         double delay = (double) 5000 * Math.pow(1.5, attempt);
         double jitter = delay * 0.2;
-        return (int) (delay + (double) RandomUtilPlus.Number.nextInt(0, (int) jitter));
+        return (int) (delay + (double) RandomUtilPlus.Number.randomInt(0, (int) jitter));
     }
 }

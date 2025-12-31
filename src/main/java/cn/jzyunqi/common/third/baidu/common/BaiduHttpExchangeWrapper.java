@@ -36,7 +36,7 @@ public class BaiduHttpExchangeWrapper {
             resultObj = proceedingJoinPoint.proceed();
         } catch (Throwable e) {
             log.debug("======baiduHttpExchange proceed throw exception=======");
-            throw new BusinessException("common_error_baidu_http_exchange_error", e);
+            throw new BusinessException(e, "common_error_baidu_http_exchange_error");
         }
         log.debug("======baiduHttpExchange proceed success=======");
         if (resultObj instanceof BaiduRspV1 baiduRspV1) {

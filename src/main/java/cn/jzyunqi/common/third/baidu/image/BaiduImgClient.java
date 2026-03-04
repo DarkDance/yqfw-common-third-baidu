@@ -1,8 +1,8 @@
 package cn.jzyunqi.common.third.baidu.image;
 
 import cn.jzyunqi.common.exception.BusinessException;
-import cn.jzyunqi.common.feature.redis.LockType;
-import cn.jzyunqi.common.feature.redis.RedisHelper;
+import cn.jzyunqi.common.support.spring.redis.LockType;
+import cn.jzyunqi.common.support.spring.redis.RedisHelper;
 import cn.jzyunqi.common.third.baidu.common.BaiduTokenApiProxy;
 import cn.jzyunqi.common.third.baidu.common.constant.BaiduCache;
 import cn.jzyunqi.common.third.baidu.common.model.ClientTokenData;

@@ -130,7 +130,7 @@ public class BaiduAiImgClient {
     }
 
     private String getClientToken() throws BusinessException {
-        ClientTokenRedisDto clientToken = (ClientTokenRedisDto) redisHelper.vGet(BaiduCache.THIRD_BAIDU_NLP_V, getClientTokenKey());
+        ClientTokenRedisDto clientToken = redisHelper.vGet(BaiduCache.THIRD_BAIDU_NLP_V, getClientTokenKey());
         if (clientToken != null && LocalDateTime.now().isBefore(clientToken.getExpireTime())) {
             return clientToken.getToken();
         }
@@ -140,7 +140,7 @@ public class BaiduAiImgClient {
         try {
             do {
                 // 防止多线程同时获取accessToken
-                clientToken = (ClientTokenRedisDto) redisHelper.vGet(BaiduCache.THIRD_BAIDU_NLP_V, getClientTokenKey());
+                clientToken = redisHelper.vGet(BaiduCache.THIRD_BAIDU_NLP_V, getClientTokenKey());
                 if (clientToken != null && LocalDateTime.now().isBefore(clientToken.getExpireTime())) {
                     return clientToken.getToken();
                 }
